@@ -52,11 +52,11 @@
 <div id="loading"><div class="spinner"></div><div>正在唤醒玫瑰…</div></div>
 <div id="error"></div>
 
-<script src="https://fastly.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
 <script type="importmap">
 {
   "imports": {
-    "three": "https://fastly.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
   }
 }
 </script>
@@ -114,7 +114,6 @@ function buildRose() {
     B.push(nx * rad * 0.8, ny * rad * 1.2 + 0.1, nz * rad * 0.8);
   }
 
-  // 6层极光配色花瓣：深紫 -> 洋红 -> 亮粉 -> 香槟金
   const layers = [
     { petals: 8, count: 1600, len: 3.0, width: 1.5, tilt: 0.25, r0: 0.25, offset: 0.0, cA: [0.25, 0.02, 0.15], cB: [0.6, 0.05, 0.3], delayBase: 0.0, sizeBase: 1.6 },
     { petals: 8, count: 1400, len: 2.5, width: 1.3, tilt: 0.55, r0: 0.2, offset: 1.2, cA: [0.5, 0.03, 0.3], cB: [0.85, 0.1, 0.45], delayBase: 0.1, sizeBase: 1.7 },
@@ -126,7 +125,6 @@ function buildRose() {
 
   for (const L of layers) {
     for (let pi = 0; pi < L.petals; pi++) {
-      // 黄金螺旋分布
       const angle = (pi / L.petals) * Math.PI * 2 + L.offset;
       const ca = Math.cos(angle), sa = Math.sin(angle);
       const ct = Math.cos(L.tilt), st = Math.sin(L.tilt);
@@ -134,21 +132,15 @@ function buildRose() {
       for (let i = 0; i < L.count; i++) {
         let u = Math.random(); 
         let s = (Math.random() * 2 - 1); 
-        
-        // 花瓣外轮廓
         const w = Math.pow(Math.sin(Math.PI * u), 0.5);
         const halfW = L.width * w;
         const lz = s * halfW;
         const lx = L.r0 + u * L.len;
 
-        // 强烈的波浪卷边与立体兜底
         let ly = 0.8 * s * s * halfW; 
-        ly += Math.sin(u * Math.PI * 6 + s * 4) * 0.06 * Math.abs(s); // 高频褶皱
-        ly -= Math.pow(u, 3) * 0.5 * L.len; // 尖端外翻
-        
-        if (L.tilt > 1.0) {
-           ly += Math.pow(u, 2) * 0.4; // 内层向内紧包
-        }
+        ly += Math.sin(u * Math.PI * 6 + s * 4) * 0.06 * Math.abs(s); 
+        ly -= Math.pow(u, 3) * 0.5 * L.len; 
+        if (L.tilt > 1.0) { ly += Math.pow(u, 2) * 0.4; }
 
         const rx = lx * ct - ly * st;
         const ry = lx * st + ly * ct;
@@ -156,7 +148,6 @@ function buildRose() {
         const pz = -rx * sa + lz * ca;
         const py = ry;
 
-        // 颜色：根部深，边缘亮。加入一点点白边高光
         const tc = Math.pow(u, 0.6);
         const c = lerpColor(L.cA, L.cB, tc);
         const isEdge = Math.abs(s) > 0.85 ? 1.3 : 1.0; 
@@ -167,7 +158,6 @@ function buildRose() {
     }
   }
 
-  // 核心：耀眼的金色花蕊
   const CORE = 2000;
   for (let i = 0; i < CORE; i++) {
     const r = Math.pow(Math.random(), 0.5) * 0.4;
@@ -176,10 +166,10 @@ function buildRose() {
     const theta = Math.random() * Math.PI * 2;
     const x = r * sinPhi * Math.cos(theta);
     const z = r * sinPhi * Math.sin(theta);
-    0.9 + 0.1;
+    const y = r * cosPhi * 0.9 + 0.1;
     const c = lerpColor([1.0, 0.7, 0.2], [1.0, 1.0, 0.9], Math.random());
     const bright = 0.9 + Math.random() * 0.5;
-    addParticle(x, y, z, c[0]*bright, c[1]*bright, c[2]*bright, 0.6 + Math.random() * 0.2, 1.0 + Math.random() * 1.5, Math.random());
+    addParticle(x, y, z, c[0]*bright, c[1]*bright, c[2]*bright, 0.6 + Math.random() * 0.2,1.0 + Math.random() * 1.5, Math.random());
   }
 
   const geo = new THREE.BufferGeometry();
@@ -260,7 +250,7 @@ const videoEl = document.getElementById('cam');
 const previewWrap = document.getElementById('previewWrap');
 const previewCv = document.getElementById('preview');
 const pctx = previewCv.getContext('2d');
-const CDN = 'https://fastly.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240';
+const CDN = 'https://unpkg.com/@mediapipe/hands@0.4.1675469240';
 
 function showError(msg) { const el = document.getElementById('error'); el.textContent = msg; el.style.display = 'block'; }
 
