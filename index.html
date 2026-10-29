@@ -3,175 +3,141 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>极光幻彩玫瑰</title>
+<title>指尖花开 · 梦幻星云</title>
 <style>
   :root { color-scheme: dark; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 100%; height: 100%; overflow: hidden; background: #030105; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    color: #ffe9f4;
-    background: radial-gradient(ellipse 90% 70% at 50% 34%, #15051f 0%, #08020c 42%, #030105 100%);
-  }
-  #app { position: fixed; inset: 0; }
-  #app canvas { display: block; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; }
+  body { font-family: -apple-system, sans-serif; color: #fff; }
+  #app { position: fixed; inset: 0; touch-action: none; }
   #cam { position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-  .hud { position: fixed; top: 24px; left: 24px; padding: 16px 20px 14px; border-radius: 16px; background: rgba(20, 8, 30, 0.45); border: 1px solid rgba(255, 160, 220, 0.16); backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45); user-select: none; pointer-events: none; max-width: 300px; }
-  .hud .title { font-size: 18px; font-weight: 600; letter-spacing: 3px; background: linear-gradient(92deg, #ff7eb3 0%, #ff2a85 40%, #ffd166 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hud .sub { margin-top: 6px; font-size: 11.5px; line-height: 1.7; color: rgba(255, 220, 240, 0.6); letter-spacing: 0.5px; }
-  .hud .bar { margin-top: 12px; width: 100%; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
-  .hud .bar .fill { height: 100%; width: 0%; border-radius: 4px; background: linear-gradient(90deg, #7b1fa2, #ff2a85 60%, #ffd166); box-shadow: 0 0 12px rgba(255, 42, 133, 0.8); transition: width 0.08s linear; }
-  .hud .status { margin-top: 9px; font-size: 12px; letter-spacing: 1px; color: rgba(255, 210, 235, 0.85); display: flex; justify-content: space-between; }
-  .hud .status .num { color: #ff2a85; font-variant-numeric: tabular-nums; }
-  .preview-wrap { position: fixed; right: 20px; bottom: 20px; width: 200px; height: 150px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255, 160, 220, 0.22); box-shadow: 0 14px 44px rgba(0, 0, 0, 0.6), 0 0 26px rgba(255, 42, 133, 0.12); background: #0b0614; transition: opacity 0.5s ease, transform 0.5s ease; transform: scaleX(-1); }
-  .preview-wrap.hidden { opacity: 0; transform: scaleX(-1) translateY(16px); }
-  #preview { display: block; width: 100%; height: 100%; }
-  #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: radial-gradient(ellipse at 50% 45%, #15051f 0%, #030105 75%); z-index: 50; transition: opacity 0.8s ease; font-size: 13px; letter-spacing: 3px; color: rgba(255, 190, 225, 0.75); }
+  .hud { position: fixed; top: 20px; left: 20px; padding: 14px 18px; border-radius: 16px; background: rgba(20, 10, 35, 0.4); border: 1px solid rgba(160, 200, 255, 0.2); backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none; }
+  .hud .title { font-size: 16px; font-weight: 600; letter-spacing: 2px; background: linear-gradient(90deg, #ff7eb3, #a855f7, #06b6d4); -webkit-background-clip: text; color: transparent; }
+  .hud .sub { margin-top: 4px; font-size: 11px; color: rgba(200, 220, 255, 0.6); }
+  #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #020108; z-index: 50; transition: opacity 0.8s ease; }
   #loading.done { opacity: 0; pointer-events: none; }
-  .spinner { width: 42px; height: 42px; border-radius: 50%; border: 2px solid rgba(255, 120, 190, 0.15); border-top-color: #ff2a85; animation: spin 0.9s linear infinite; }
+  .spinner { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(168, 85, 247, 0.2); border-top-color: #06b6d4; animation: spin 1s linear infinite; margin-bottom: 16px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  #error { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: 420px; padding: 20px 24px; border-radius: 14px; background: rgba(60, 10, 30, 0.85); border: 1px solid rgba(255, 90, 140, 0.35); font-size: 13px; line-height: 1.8; color: #ffc4d8; display: none; z-index: 60; text-align: center; }
-  @media (max-width: 640px) {
-    .hud { top: 14px; left: 14px; padding: 12px 15px 11px; max-width: 220px; }
-    .hud .title { font-size: 15px; letter-spacing: 2px; }
-    .hud .sub { font-size: 10px; }
-    .preview-wrap { width: 140px; height: 105px; right: 12px; bottom: 12px; }
-  }
+  .text { font-size: 13px; letter-spacing: 2px; color: #a855f7; }
 </style>
 </head>
 <body>
 <div id="app"></div>
 <video id="cam" playsinline muted autoplay></video>
 <div class="hud">
-  <div class="title">极光玫瑰</div>
-  <div class="sub">张开手掌 · 玫瑰绽放　｜　握拳 · 收拢成苞</div>
-  <div class="bar"><div class="fill" id="bar"></div></div>
-  <div class="status"><span id="status">初始化中…</span><span class="num" id="num">0%</span></div>
+  <div class="title">梦幻星云 · 玫瑰</div>
+  <div class="sub">张手绽放 · 握拳收拢 · 触屏交互</div>
 </div>
-<div class="preview-wrap hidden" id="previewWrap"><canvas id="preview" width="200" height="150"></canvas></div>
-<div id="loading"><div class="spinner"></div><div>正在唤醒玫瑰…</div></div>
-<div id="error"></div>
+<div id="loading"><div class="spinner"></div><div class="text">正在唤醒星空…</div></div>
 
-<script src="https://unpkg.com/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
 <script type="importmap">
 {
   "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
   }
 }
 </script>
+<script src="https://unpkg.com/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
+
 <script type="module">
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-const state = { bloom: 0, targetBloom: 0, rawBloom: 0, time: 0, autoRot: 0, hasHand: false, lastHandTime: 0 };
-const pointer = new THREE.Vector2(0, 0);
-const pointerTarget = new THREE.Vector2(0, 0);
-let lastLandmarks = null;
-
+// ============ 核心状态 ============
+let handBloom = 0, targetHandBloom = 0;
+const clock = new THREE.Clock();
 const container = document.getElementById('app');
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x000000, 0);
+
+// ============ 1. 场景与相机 ============
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x020108, 0.02);
+const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 200);
+camera.position.set(0, 4, 8.5);
+camera.lookAt(0, 0.5, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 container.appendChild(renderer.domElement);
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
-camera.position.set(0, 4.8, 7.2);
-camera.lookAt(0, 0.8, 0);
+// ============ 2. 后期处理 (发光效果) ============
+const renderScene = new RenderPass(scene, camera);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.5, 0.4, 0.85);
+bloomPass.threshold = 0.1;
+bloomPass.strength = 1.2;
+bloomPass.radius = 0.5;
+const composer = new EffectComposer(renderer);
+composer.addPass(renderScene);
+composer.addPass(bloomPass);
 
-(function addStars() {
-  const N = 1500;
-  const pos = new Float32Array(N * 3);
-  const colors = new Float32Array(N * 3);
-  for (let i = 0; i < N; i++) {
-    const r = 20 + Math.random() * 40;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-    pos[i * 3 + 1] = r * Math.cos(phi) * 0.8 + 4;
-    pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-    const c = new THREE.Color().setHSL(0.9 + Math.random()*0.1, 0.8, 0.5 + Math.random()*0.3);
-    colors[i*3] = c.r; colors[i*3+1] = c.g; colors[i*3+2] = c.b;
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  g.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  const m = new THREE.PointsMaterial({ vertexColors: true, size: 0.1, transparent: true, opacity: 0.6, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
-  scene.add(new THREE.Points(g, m));
-})();
+// ============ 3. 梦幻星空与星云背景 ============
+const bgGeo = new THREE.BufferGeometry();
+const bgCount = 3000;
+const bgPos = new Float32Array(bgCount * 3);
+const bgCol = new Float32Array(bgCount * 3);
+for (let i = 0; i < bgCount; i++) {
+  const r = 20 + Math.random() * 40;
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(2 * Math.random() - 1);
+  bgPos[i*3] = r * Math.sin(phi) * Math.cos(theta);
+  bgPos[i*3+1] = r * Math.cos(phi) * 0.8 + 5;
+  bgPos[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
+  const c = new THREE.Color().setHSL(0.65 + Math.random()*0.2, 0.8, 0.6 + Math.random()*0.4);
+  bgCol[i*3] = c.r; bgCol[i*3+1] = c.g; bgCol[i*3+2] = c.b;
+}
+bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPos, 3));
+bgGeo.setAttribute('color', new THREE.BufferAttribute(bgCol, 3));
+const bgMat = new THREE.PointsMaterial({ size: 0.15, vertexColors: true, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false });
+scene.add(new THREE.Points(bgGeo, bgMat));
 
-function buildRose() {
+// ============ 4. 主花朵生成 ============
+function buildFlower() {
   const P = [], B = [], C = [], D = [], S = [], Q = [];
-  const col = [0, 0, 0];
-  function lerpColor(a, b, t) { col[0] = a[0] + (b[0] - a[0]) * t; col[1] = a[1] + (b[1] - a[1]) * t; col[2] = a[2] + (b[2] - a[2]) * t; return col; }
-  
-  function addParticle(px, py, pz, r, g, b, delay, size, seed) {
-    P.push(px, py, pz); C.push(r, g, b); D.push(Math.min(1, delay)); S.push(size); Q.push(seed);
-    const len = Math.hypot(px, py, pz) || 1;
-    const nx = px / len, ny = py / len, nz = pz / len;
-    const rad = 0.08 + Math.random() * 0.12;
-    B.push(nx * rad * 0.8, ny * rad * 1.2 + 0.1, nz * rad * 0.8);
-  }
-
   const layers = [
-    { petals: 8, count: 1600, len: 3.0, width: 1.5, tilt: 0.25, r0: 0.25, offset: 0.0, cA: [0.25, 0.02, 0.15], cB: [0.6, 0.05, 0.3], delayBase: 0.0, sizeBase: 1.6 },
-    { petals: 8, count: 1400, len: 2.5, width: 1.3, tilt: 0.55, r0: 0.2, offset: 1.2, cA: [0.5, 0.03, 0.3], cB: [0.85, 0.1, 0.45], delayBase: 0.1, sizeBase: 1.7 },
-    { petals: 7, count: 1200, len: 2.0, width: 1.1, tilt: 0.85, r0: 0.18, offset: 2.4, cA: [0.7, 0.05, 0.45], cB: [0.95, 0.2, 0.6], delayBase: 0.2, sizeBase: 1.8 },
-    { petals: 7, count: 1000, len: 1.5, width: 0.9, tilt: 1.15, r0: 0.15, offset: 0.6, cA: [0.85, 0.1, 0.55], cB: [1.0, 0.4, 0.75], delayBase: 0.3, sizeBase: 1.9 },
-    { petals: 6, count: 800,  len: 1.0, width: 0.6, tilt: 1.35, r0: 0.1, offset: 1.8, cA: [0.95, 0.2, 0.7], cB: [1.0, 0.6, 0.85], delayBase: 0.4, sizeBase: 2.0 },
-    { petals: 5, count: 500,  len: 0.6, width: 0.4, tilt: 1.55, r0: 0.05, offset: 3.0, cA: [1.0, 0.4, 0.8], cB: [1.0, 0.85, 0.95], delayBase: 0.5, sizeBase: 2.1 }
+    { p: 8, n: 1200, l: 3.2, w: 1.4, t: 0.3, r: 0.2, o: 0, d: 0, s: 1.8 },
+    { p: 7, n: 1000, l: 2.6, w: 1.1, t: 0.6, r: 0.18, o: 1.2, d: 0.15, s: 1.9 },
+    { p: 7, n: 800,  l: 2.0, w: 0.9, t: 0.9, r: 0.15, o: 2.4, d: 0.25, s: 2.0 },
+    { p: 6, n: 600,  l: 1.4, w: 0.7, t: 1.2, r: 0.1,  o: 0.6, d: 0.35, s: 2.1 },
+    { p: 5, n: 400,  l: 0.8, w: 0.5, t: 1.4, r: 0.05, o: 1.8, d: 0.45, s: 2.2 },
   ];
+  const c1 = [1.0, 0.4, 0.8], c2 = [0.65, 0.3, 0.9], c3 = [0.1, 0.8, 1.0]; // 粉 -> 紫 -> 青蓝
 
   for (const L of layers) {
-    for (let pi = 0; pi < L.petals; pi++) {
-      const angle = (pi / L.petals) * Math.PI * 2 + L.offset;
-      const ca = Math.cos(angle), sa = Math.sin(angle);
-      const ct = Math.cos(L.tilt), st = Math.sin(L.tilt);
-
-      for (let i = 0; i < L.count; i++) {
-        let u = Math.random(); 
-        let s = (Math.random() * 2 - 1); 
+    for (let pi = 0; pi < L.p; pi++) {
+      const a = (pi / L.p) * Math.PI * 2 + L.o;
+      const ca = Math.cos(a), sa = Math.sin(a), ct = Math.cos(L.t), st = Math.sin(L.t);
+      for (let i = 0; i < L.n; i++) {
+        let u = Math.random(), s = Math.random() * 2 - 1;
         const w = Math.pow(Math.sin(Math.PI * u), 0.5);
-        const halfW = L.width * w;
-        const lz = s * halfW;
-        const lx = L.r0 + u * L.len;
-
-        let ly = 0.8 * s * s * halfW; 
-        ly += Math.sin(u * Math.PI * 6 + s * 4) * 0.06 * Math.abs(s); 
-        ly -= Math.pow(u, 3) * 0.5 * L.len; 
-        if (L.tilt > 1.0) { ly += Math.pow(u, 2) * 0.4; }
-
-        const rx = lx * ct - ly * st;
-        const ry = lx * st + ly * ct;
-        const px = rx * ca + lz * sa;
-        const pz = -rx * sa + lz * ca;
-        const py = ry;
-
-        const tc = Math.pow(u, 0.6);
-        const c = lerpColor(L.cA, L.cB, tc);
-        const isEdge = Math.abs(s) > 0.85 ? 1.3 : 1.0; 
-        const bright = (0.7 + Math.random() * 0.5) * isEdge;
-
-        addParticle(px, py, pz, c[0] * bright, c[1] * bright, c[2] * bright, L.delayBase + Math.random() * 0.2, L.sizeBase * (0.8 + Math.random()*0.4), Math.random());
+        const lz = s * L.w * w, lx = L.r + u * L.l;
+        let ly = 0.8 * s * s * L.w * w - Math.pow(u, 3) * 0.5 * L.l;
+        if (L.t > 1.0) ly += Math.pow(u, 2) * 0.4; // 内层向内包
+        
+        const rx = lx * ct - ly * st, ry = lx * st + ly * ct;
+        P.push(rx * ca + lz * sa, ry, -rx * sa + lz * ca);
+        
+        // 花苞状态位置
+        const len = Math.hypot(rx, ry, lz) || 1;
+        const br = 0.1 + Math.random() * 0.15;
+        B.push((rx/len)*br, (ry/len)*br*1.2 + 0.1, (lz/len)*br);
+        
+        // 渐变颜色计算
+        const mixT = u * 0.8 + Math.random() * 0.2;
+        let col = [0,0,0];
+        if (mixT < 0.5) { const t = mixT * 2; col = [c1[0]+(c2[0]-c1[0])*t, c1[1]+(c2[1]-c1[1])*t, c1[2]+(c2[2]-c1[2])*t]; }
+        else { const t = (mixT - 0.5) * 2; col = [c2[0]+(c3[0]-c2[0])*t, c2[1]+(c3[1]-c2[1])*t, c2[2]+(c3[2]-c2[2])*t]; }
+        const brg = 0.8 + Math.random() * 0.4;
+        C.push(col[0]*brg, col[1]*brg, col[2]*brg);
+        
+        D.push(L.d + Math.random() * 0.2);
+        S.push(L.s * (0.8 + Math.random() * 0.4));
+        Q.push(Math.random());
       }
     }
   }
-
-  const CORE = 2000;
-  for (let i = 0; i < CORE; i++) {
-    const r = Math.pow(Math.random(), 0.5) * 0.4;
-    const cosPhi = Math.random();
-    const sinPhi = Math.sqrt(1 - cosPhi * cosPhi);
-    const theta = Math.random() * Math.PI * 2;
-    const x = r * sinPhi * Math.cos(theta);
-    const z = r * sinPhi * Math.sin(theta);
-    const y = r * cosPhi * 0.9 + 0.1;
-    const c = lerpColor([1.0, 0.7, 0.2], [1.0, 1.0, 0.9], Math.random());
-    const bright = 0.9 + Math.random() * 0.5;
-    addParticle(x, y, z, c[0]*bright, c[1]*bright, c[2]*bright, 0.6 + Math.random() * 0.2,1.0 + Math.random() * 1.5, Math.random());
-  }
-
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3));
   geo.setAttribute('aBud', new THREE.Float32BufferAttribute(B, 3));
@@ -179,173 +145,226 @@ function buildRose() {
   geo.setAttribute('aDelay', new THREE.Float32BufferAttribute(D, 1));
   geo.setAttribute('aSize', new THREE.Float32BufferAttribute(S, 1));
   geo.setAttribute('aSeed', new THREE.Float32BufferAttribute(Q, 1));
-  geo.computeBoundingSphere();
   return geo;
 }
 
-const vertexShader = `
-  attribute vec3 aBud; attribute vec3 aColor; attribute float aDelay; attribute float aSize; attribute float aSeed;
-  uniform float uBloom; uniform float uTime; uniform float uPixelRatio; uniform vec2 uPointer;
-  varying vec3 vColor; varying float vAlpha;
-  
-  float easeOutElastic(float t) {
-    float c4 = (2.0 * 3.14159265) / 3.0;
-    return t == 0.0 ? 0.0 : t == 1.0 ? 1.0 : pow(2.0, -10.0 * t) * sin((t * 10.0 - 0.75) * c4) + 1.0;
-  }
+// ============ 5. 花朵着色器 ============
+const flowerMat = new THREE.ShaderMaterial({
+  uniforms: {
+    uBloom: { value: 0 },
+    uTime: { value: 0 },
+    uPR: { value: Math.min(devicePixelRatio, 2) },
+    uMouse: { value: new THREE.Vector2(0, 0) }
+  },
+  vertexShader: `
+    attribute vec3 aBud; attribute vec3 aColor; attribute float aDelay; attribute float aSize; attribute float aSeed;
+    uniform float uBloom; uniform float uTime; uniform float uPR; uniform vec2 uMouse;
+    varying vec3 vColor; varying float vAlpha;
+    float elastic(float t) { return t == 0.0 ? 0.0 : t == 1.0 ? 1.0 : pow(2.0, -10.0 * t) * sin((t * 10.0 - 0.75) * (2.0 * 3.14159) / 3.0) + 1.0; }
+    void main() {
+      float raw = clamp((uBloom - aDelay * 0.4) / 0.6, 0.0, 1.0);
+      float t = elastic(raw);
+      vec3 pos = mix(aBud, position, t);
+      float ph = aSeed * 6.2831853;
+      pos.x += sin(uTime * 1.5 + ph) * 0.02;
+      pos.y += cos(uTime * 1.8 + ph) * 0.02;
+      pos.x += uMouse.x * 0.5 * (0.1 + aSeed);
+      pos.y += uMouse.y * 0.5 * (0.1 + aSeed);
+      vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+      gl_Position = projectionMatrix * mv;
+      gl_PointSize = aSize * uPR * mix(0.5, 1.0, t) * (0.8 + 0.4 * sin(uTime * 4.0 + ph)) * (8.5 / -mv.z);
+      vColor = aColor;
+      vAlpha = mix(0.2, 1.0, t);
+    }
+  `,
+  fragmentShader: `
+    varying vec3 vColor; varying float vAlpha;
+    void main() {
+      vec2 c = gl_PointCoord - 0.5;
+      float d = length(c);
+      if (d > 0.5) discard;
+      float core = smoothstep(0.2, 0.0, d);
+      float a = pow(smoothstep(0.5, 0.1, d), 1.2);
+      gl_FragColor = vec4(vColor + vec3(core * 0.4), a * vAlpha);
+    }
+  `,
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+});
 
-  void main() {
-    float raw = clamp((uBloom - aDelay * 0.4) / 0.6, 0.0, 1.0);
-    float t = easeOutElastic(raw);
-    
-    vec3 pos = mix(aBud, position, t);
-    
-    float ph = aSeed * 6.2831853;
-    pos.x += sin(uTime * 1.2 + ph) * 0.02; 
-    pos.y += cos(uTime * 1.5 + ph * 1.3) * 0.02; 
-    pos.z += sin(uTime * 0.9 + ph * 0.8) * 0.02;
-    
-    float amp = 0.4 * (0.1 + aSeed * 0.9) * smoothstep(0.0, 0.9, t);
-    pos.x += uPointer.x * amp; 
-    pos.y += uPointer.y * amp;
-    
-    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-    gl_Position = projectionMatrix * mv;
-    
-    float shrink = mix(0.4, 1.0, t);
-    float twinkle = 0.8 + 0.4 * sin(uTime * 3.0 + ph);
-    gl_PointSize = aSize * uPixelRatio * shrink * twinkle * (8.5 / max(0.001, -mv.z));
-    
-    vColor = aColor; 
-    vAlpha = mix(0.2, 1.0, t);
-  }
-`;
-
-const fragmentShader = `
-  varying vec3 vColor; varying float vAlpha;
-  void main() {
-    vec2 c = gl_PointCoord - 0.5; 
-    float d = length(c);
-    if (d > 0.5) discard;
-    
-    float core = smoothstep(0.2, 0.0, d);
-    float glow = smoothstep(0.5, 0.1, d);
-    
-    vec3 finalColor = vColor + vec3(core * 0.3);
-    float a = pow(glow, 1.2);
-    
-    gl_FragColor = vec4(finalColor * a * 1.2, a * vAlpha);
-  }
-`;
-
-const uniforms = { uBloom: { value: 0 }, uTime: { value: 0 }, uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) }, uPointer: { value: new THREE.Vector2(0, 0) } };
-const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader, transparent: true, depthWrite: false, depthTest: true, blending: THREE.AdditiveBlending });
-const flowerGeometry = buildRose();
-const flowerPoints = new THREE.Points(flowerGeometry, material);
+const flower = new THREE.Points(buildFlower(), flowerMat);
 const flowerGroup = new THREE.Group();
-flowerGroup.add(flowerPoints);
+flowerGroup.add(flower);
 flowerGroup.position.y = 0.35;
 scene.add(flowerGroup);
 
-const videoEl = document.getElementById('cam');
-const previewWrap = document.getElementById('previewWrap');
-const previewCv = document.getElementById('preview');
-const pctx = previewCv.getContext('2d');
-const CDN = 'https://unpkg.com/@mediapipe/hands@0.4.1675469240';
+// ============ 6. 交互特效系统 (光晕 & 拖尾) ============
+// 拖尾粒子池
+const trailCount = 5000;
+const trailGeo = new THREE.BufferGeometry();
+const trailPos = new Float32Array(trailCount * 3);
+const trailCol = new Float32Array(trailCount * 3);
+const trailLife = new Float32Array(trailCount);
+const trailVel = [];
+for(let i=0; i<trailCount; i++) { trailPos[i*3+1] = -999; trailVel.push({x:0,y:0,z:0}); }
+trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3));
+trailGeo.setAttribute('color', new THREE.BufferAttribute(trailCol, 3));
+const trailMat = new THREE.PointsMaterial({ size: 0.08, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false });
+const trailMesh = new THREE.Points(trailGeo, trailMat);
+scene.add(trailMesh);
 
-function showError(msg) { const el = document.getElementById('error'); el.textContent = msg; el.style.display = 'block'; }
+// 点击光晕池
+const ripples = [];
+for(let i=0; i<10; i++) {
+  const rippleGeo = new THREE.RingGeometry(0.1, 0.15, 32);
+  const rippleMat =new THREE.MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
+  const mesh = new THREE.Mesh(rippleGeo, rippleMat);
+  mesh.visible = false;
+  scene.add(mesh);
+  ripples.push({ mesh, life: 0 });
+}
 
+// 3D 交互射线
+const raycaster = new THREE.Raycaster();
+const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+const mouse3D = new THREE.Vector3();
+let trailIndex = 0;
+
+// 指针事件 (统一处理鼠标和多点触控)
+const activePointers = new Map();
+container.addEventListener('pointerdown', (e) => {
+  const rect = container.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  
+  activePointers.set(e.pointerId, { x, y });
+  
+  // 触发光晕扩散
+  raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+  if (raycaster.ray.intersectPlane(plane, mouse3D)) {
+    const r = ripples.find(r => r.life <= 0);
+    if (r) {
+      r.mesh.position.copy(mouse3D);
+      r.mesh.scale.set(1,1,1);
+      r.mesh.material.opacity = 1;
+      r.mesh.visible = true;
+      r.life = 1.0;
+    }
+  }
+});
+
+container.addEventListener('pointermove', (e) => {
+  if (!activePointers.has(e.pointerId)) return;
+  const rect = container.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  activePointers.set(e.pointerId, { x, y });
+
+  // 发射拖尾粒子
+  raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+  if (raycaster.ray.intersectPlane(plane, mouse3D)) {
+    for(let i=0; i<4; i++) {
+      const idx = trailIndex % trailCount;
+      trailPos[idx*3] = mouse3D.x + (Math.random()-0.5)*0.2;
+      trailPos[idx*3+1] = mouse3D.y + (Math.random()-0.5)*0.2;
+      trailPos[idx*3+2] = mouse3D.z + (Math.random()-0.5)*0.2;
+      const c = new THREE.Color().setHSL(0.6 + Math.random()*0.3, 0.8, 0.7);
+      trailCol[idx*3] = c.r; trailCol[idx*3+1] = c.g; trailCol[idx*3+2] = c.b;
+      trailLife[idx] = 1.0;
+      trailVel[idx] = { x: (Math.random()-0.5)*0.05, y: (Math.random()-0.5)*0.05, z: (Math.random()-0.5)*0.05 };
+      trailIndex++;
+    }
+  }
+});
+
+container.addEventListener('pointerup', (e) => { activePointers.delete(e.pointerId); });
+container.addEventListener('pointercancel', (e) => { activePointers.delete(e.pointerId); });
+
+
+// ============ 7. MediaPipe 手势识别 ============
+const video = document.getElementById('cam');
 async function initHands() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }, audio: false });
-    videoEl.srcObject = stream; await videoEl.play();
-  } catch (err) { showError('无法访问摄像头：' + (err.message || err.name) + '\n请检查浏览器权限，或改用 https / localhost 访问。'); return; }
-  if (typeof window.Hands === 'undefined') { showError('MediaPipe Hands 加载失败，请检查网络后刷新页面。'); return; }
-  const hands = new window.Hands({ locateFile: (file) => `${CDN}/${file}` });
-  hands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 });
-  hands.onResults(onHandResults);
-  previewWrap.classList.remove('hidden');
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+    video.srcObject = stream; await video.play();
+  } catch (e) { console.warn("摄像头未授权"); return; }
+
+  if (typeof window.Hands === 'undefined') return;
+  const hands = new window.Hands({ locateFile: (f) => `https://unpkg.com/@mediapipe/hands@0.4.1675469240/${f}` });
+  hands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.6 });
+  
+  hands.onResults((res) => {
+    if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
+      const lm = res.multiHandLandmarks[0];
+      const wrist = lm[0], palm = Math.hypot(lm[9].x - wrist.x, lm[9].y - wrist.y) + 1e-6;
+      let dSum = 0;
+      [8,12,16,20].forEach(i => dSum += Math.hypot(lm[i].x - wrist.x, lm[i].y - wrist.y) / palm);
+      targetHandBloom = THREE.MathUtils.smoothstep(dSum/4, 1.1, 1.7);
+      
+      const tip = lm[8];
+      flowerMat.uniforms.uMouse.value.set(((1-tip.x)*2-1)*0.5, (1-tip.y*2)*0.5);
+    }
+  });
+
   (async function pump() {
-    if (videoEl.readyState >= 2) { try { await hands.send({ image: videoEl }); } catch (e) {} }
+    if (video.readyState >= 2) { try { await hands.send({ image: video }); } catch(e){} }
     requestAnimationFrame(pump);
   })();
 }
 
-function onHandResults(results) {
-  const list = results.multiHandLandmarks;
-  if (list && list.length > 0) {
-    const lm = list[0]; lastLandmarks = lm; state.lastHandTime = performance.now();
-    const wrist = lm[0]; const mcpMid = lm[9];
-    const palm = Math.hypot(mcpMid.x - wrist.x, mcpMid.y - wrist.y) + 1e-6;
-    const tipIdx = [8, 12, 16, 20]; let distSum = 0;
-    for (const i of tipIdx) { distSum += Math.hypot(lm[i].x - wrist.x, lm[i].y - wrist.y) / palm; }
-    const ratio = distSum / tipIdx.length;
-    const sigA = THREE.MathUtils.smoothstep(ratio, 1.08, 1.62);
-    const chains = [[5, 6, 8], [9, 10, 12], [13, 14, 16], [17, 18, 20]]; let curlSum = 0;
-    for (const [a, b, c] of chains) {
-      const ax = lm[b].x - lm[a].x, ay = lm[b].y - lm[a].y;
-      const bx = lm[c].x - lm[b].x, by = lm[c].y - lm[b].y;
-      const la = Math.hypot(ax, ay) + 1e-6; const lb = Math.hypot(bx, by) + 1e-6;
-      curlSum += (((ax * bx + ay * by) / (la * lb)) + 1) * 0.5;
-    }
-    const sigB = THREE.MathUtils.smoothstep(curlSum / chains.length, 0.30, 0.75);
-    state.rawBloom = THREE.MathUtils.clamp(sigA * 0.55 + sigB * 0.45, 0, 1);
-    state.hasHand = true;
-    const tip = lm[8];
-    pointerTarget.set(THREE.MathUtils.clamp(((1 - tip.x) * 2 - 1) * 0.9, -1, 1), THREE.MathUtils.clamp((1 - tip.y * 2) * 0.9, -1, 1));
-  } else { lastLandmarks = null; state.hasHand = false; }
-  drawPreview(lastLandmarks);
-}
-
-const HAND_CONNECTIONS = window.HAND_CONNECTIONS || [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
-
-function drawPreview(lm) {
-  const W = previewCv.width, H = previewCv.height; pctx.clearRect(0, 0, W, H);
-  if (videoEl.readyState >= 2) { pctx.drawImage(videoEl, 0, 0, W, H); pctx.fillStyle = 'rgba(5, 3, 10, 0.34)'; pctx.fillRect(0, 0, W, H); }
-  if (!lm) return;
-  pctx.lineWidth = 2; pctx.strokeStyle = 'rgba(120, 255, 235, 0.72)'; pctx.beginPath();
-  for (const [a, b] of HAND_CONNECTIONS) { pctx.moveTo(lm[a].x * W, lm[a].y * H); pctx.lineTo(lm[b].x * W, lm[b].y * H); }
-  pctx.stroke();
-  for (let i = 0; i < lm.length; i++) {
-    const isTip = (i === 4 || i === 8 || i === 12 || i === 16 || i === 20);
-    pctx.beginPath(); pctx.arc(lm[i].x * W, lm[i].y * H, isTip ? 3.6 : 2.0, 0, Math.PI * 2);
-    pctx.fillStyle = i === 8 ? '#ff2a85' : 'rgba(255, 225, 245, 0.92)'; pctx.fill();
-  }
-}
-
-const clock = new THREE.Clock();
-const barEl = document.getElementById('bar'); const statusEl = document.getElementById('status'); const numEl = document.getElementById('num');
-let hudAcc = 0;
-
+// ============ 8. 主循环 ============
 function animate() {
   requestAnimationFrame(animate);
-  const dt = Math.min(clock.getDelta(), 0.05); state.time += dt; const now = performance.now();
-  const handAlive = state.hasHand && (now - state.lastHandTime < 500);
-  if (handAlive) { state.targetBloom = state.rawBloom; } else { state.targetBloom = 0.12 + 0.05 * Math.sin(state.time * 1.2); pointerTarget.multiplyScalar(0.94); }
-  const kB = 1 - Math.exp(-6.0 * dt); state.bloom += (state.targetBloom - state.bloom) * kB;
-  const kP = 1 - Math.exp(-5.0 * dt); pointer.x += (pointerTarget.x - pointer.x) * kP; pointer.y += (pointerTarget.y - pointer.y) * kP;
-  state.autoRot += dt * 0.15;
-  flowerGroup.rotation.y = state.autoRot + pointer.x * 0.55; flowerGroup.rotation.x = -pointer.y * 0.22;
-  flowerGroup.position.y = 0.35 + Math.sin(state.time * 0.9) * 0.05;
-  const kC = 1 - Math.exp(-2.5 * dt);
-  camera.position.x += (pointer.x * 0.9 - camera.position.x) * kC; camera.position.y += ((4.8 - pointer.y * 0.55) - camera.position.y) * kC; camera.lookAt(0, 0.8, 0);
-  uniforms.uBloom.value = state.bloom; uniforms.uTime.value = state.time; uniforms.uPointer.value.set(pointer.x * 0.6, pointer.y * 0.6);
-  renderer.render(scene, camera);
-  hudAcc += dt;
-  if (hudAcc > 0.08) {
-    hudAcc = 0; const p = Math.round(state.bloom * 100); barEl.style.width = p + '%'; numEl.textContent = p + '%';
-    if (!handAlive) { statusEl.textContent = '未检测到手 · 待机'; } else if (state.bloom > 0.62) { statusEl.textContent = '🌹 盛开'; } else if (state.bloom < 0.28) { statusEl.textContent = '✊ 花苞'; } else { statusEl.textContent = '🤚 半开'; }
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const time = clock.getElapsedTime();
+
+  handBloom += (targetHandBloom - handBloom) * (1 - Math.exp(-5 * dt));
+  const finalBloom = handBloom > 0.05 ? handBloom : 0.1 + 0.05 * Math.sin(time * 1.5);
+  
+  flowerMat.uniforms.uBloom.value = finalBloom;
+  flowerMat.uniforms.uTime.value = time;
+
+  flowerGroup.rotation.y = time * 0.1;
+  flowerGroup.position.y = 0.35 + Math.sin(time * 0.8) * 0.05;
+
+  for (let i = 0; i < trailCount; i++) {
+    if (trailLife[i] > 0) {
+      trailLife[i] -= dt * 1.5;
+      trailPos[i*3] += trailVel[i].x;
+      trailPos[i*3+1] += trailVel[i].y;
+      trailPos[i*3+2] += trailVel[i].z;
+    } else {
+      trailPos[i*3+1] = -999;
+    }
   }
+  trailGeo.attributes.position.needsUpdate = true;
+  trailGeo.attributes.color.needsUpdate = true;
+
+  ripples.forEach(r => {
+    if (r.life > 0) {
+      r.life -= dt * 1.2;
+      const scale = 1 + (1 - r.life) * 20;
+      r.mesh.scale.set(scale, scale, 1);
+      r.mesh.material.opacity = r.life * 0.8;
+      if (r.life <= 0) r.mesh.visible = false;
+    }
+  });
+
+  composer.render();
 }
 
+// 启动
 window.addEventListener('resize', () => {
-  const w = window.innerWidth; const h = window.innerHeight;
-  camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); renderer.setSize(w, h); uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, 2);
+  camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  flowerMat.uniforms.uPR.value = Math.min(devicePixelRatio, 2);
 });
 
+initHands().finally(() => {
+  setTimeout(() => { document.getElementById('loading').classList.add('done'); }, 400);
+});
+setTimeout(() => { document.getElementById('loading').classList.add('done'); }, 3000);
 animate();
-
-initHands().finally(() => { setTimeout(() => { document.getElementById('loading').classList.add('done'); }, 400); });
-setTimeout(() => { document.getElementById('loading').classList.add('done'); }, 6000);
 </script>
 </body>
 </html>
