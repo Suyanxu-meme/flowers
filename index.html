@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>梦幻青蓝紫 · 手势花开</title>
+<title>落日珊瑚 · 手势康乃馨</title>
 <style>
   :root { color-scheme: dark; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -11,24 +11,24 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     color: #ffe9f4;
-    background: radial-gradient(ellipse 90% 70% at 50% 34%, #130a2a 0%, #080414 42%, #05030a 100%);
+    background: radial-gradient(ellipse 90% 70% at 50% 34%, #2a1118 0%, #14060c 42%, #05030a 100%);
   }
   #app { position: fixed; inset: 0; }
   #app canvas { display: block; }
   #cam { position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-  .hud { position: fixed; top: 24px; left: 24px; padding: 16px 20px 14px; border-radius: 16px; background: rgba(20, 10, 35, 0.45); border: 1px solid rgba(160, 200, 255, 0.16); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 10px 40px rgba(0,0,0,0.5); user-select: none; pointer-events: none; max-width: 300px; }
-  .hud .title { font-size: 18px; font-weight: 600; letter-spacing: 3px; background: linear-gradient(92deg, #c084fc 0%, #a855f7 40%, #22d3ee 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hud .sub { margin-top: 6px; font-size: 11.5px; line-height: 1.7; color: rgba(200, 220, 255, 0.6); letter-spacing: 0.5px; }
+  .hud { position: fixed; top: 24px; left: 24px; padding: 16px 20px 14px; border-radius: 16px; background: rgba(40, 20, 25, 0.45); border: 1px solid rgba(255, 160, 180, 0.16); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 10px 40px rgba(0,0,0,0.5); user-select: none; pointer-events: none; max-width: 300px; }
+  .hud .title { font-size: 18px; font-weight: 600; letter-spacing: 3px; background: linear-gradient(92deg, #ff7eb3 0%, #ff5e62 40%, #ffd194 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hud .sub { margin-top: 6px; font-size: 11.5px; line-height: 1.7; color: rgba(255, 210, 220, 0.6); letter-spacing: 0.5px; }
   .hud .bar { margin-top: 12px; width: 100%; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
-  .hud .bar .fill { height: 100%; width: 0%; border-radius: 4px; background: linear-gradient(90deg, #a855f7, #22d3ee); box-shadow: 0 0 12px rgba(34, 211, 238, 0.8); transition: width 0.08s linear; }
-  .hud .status { margin-top: 9px; font-size: 12px; letter-spacing: 1px; color: rgba(200, 220, 255, 0.85); display: flex; justify-content: space-between; }
-  .hud .status .num { color: #22d3ee; font-variant-numeric: tabular-nums; }
-  .preview-wrap { position: fixed; right: 20px; bottom: 20px; width: 200px; height: 150px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(160, 200, 255, 0.22); box-shadow: 0 14px 44px rgba(0,0,0,0.6), 0 0 26px rgba(168, 85, 247, 0.12); background: #0b0614; transition: opacity 0.5s ease, transform 0.5s ease; transform: scaleX(-1); }
+  .hud .bar .fill { height: 100%; width: 0%; border-radius: 4px; background: linear-gradient(90deg, #ff5e62, #ffd194); box-shadow: 0 0 12px rgba(255, 94, 98, 0.8); transition: width 0.08s linear; }
+  .hud .status { margin-top: 9px; font-size: 12px; letter-spacing: 1px; color: rgba(255, 210, 220, 0.85); display: flex; justify-content: space-between; }
+  .hud .status .num { color: #ff7eb3; font-variant-numeric: tabular-nums; }
+  .preview-wrap { position: fixed; right: 20px; bottom: 20px; width: 200px; height: 150px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255, 160, 180, 0.22); box-shadow: 0 14px 44px rgba(0,0,0,0.6), 0 0 26px rgba(255, 94, 98, 0.12); background: #0b0614; transition: opacity 0.5s ease, transform 0.5s ease; transform: scaleX(-1); }
   .preview-wrap.hidden { opacity: 0; transform: scaleX(-1) translateY(16px); }
   #preview { display: block; width: 100%; height: 100%; }
-  #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: radial-gradient(ellipse at 50% 45%, #130a2a 0%, #05030a 75%); z-index: 50; transition: opacity 0.8s ease; font-size: 13px; letter-spacing: 3px; color: rgba(200, 220, 255, 0.75); }
+  #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: radial-gradient(ellipse at 50% 45%, #2a1118 0%, #05030a 75%); z-index: 50; transition: opacity 0.8s ease; font-size: 13px; letter-spacing: 3px; color: rgba(255, 200, 210, 0.75); }
   #loading.done { opacity: 0; pointer-events: none; }
-  .spinner { width: 42px; height: 42px; border-radius: 50%; border: 2px solid rgba(168, 85, 247, 0.15); border-top-color: #22d3ee; animation: spin 0.9s linear infinite; }
+  .spinner { width: 42px; height: 42px; border-radius: 50%; border: 2px solid rgba(255, 94, 98, 0.15); border-top-color: #ffd194; animation: spin 0.9s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   #error { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: 420px; padding: 20px 24px; border-radius: 14px; background: rgba(60, 10, 30, 0.85); border: 1px solid rgba(255, 90, 140, 0.35); font-size: 13px; line-height: 1.8; color: #ffc4d8; display: none; z-index: 60; text-align: center; }
   @media (max-width: 640px) {
@@ -43,13 +43,13 @@
 <div id="app"></div>
 <video id="cam" playsinline muted autoplay></video>
 <div class="hud">
-  <div class="title">梦幻星云玫瑰</div>
+  <div class="title">落日珊瑚康乃馨</div>
   <div class="sub">张开手掌 · 花朵绽放　｜　握拳 · 收拢成苞</div>
   <div class="bar"><div class="fill" id="bar"></div></div>
   <div class="status"><span id="status">初始化中…</span><span class="num" id="num">0%</span></div>
 </div>
 <div class="preview-wrap hidden" id="previewWrap"><canvas id="preview" width="200" height="150"></canvas></div>
-<div id="loading"><div class="spinner"></div><div>正在唤醒花朵…</div></div>
+<div id="loading"><div class="spinner"></div><div>正在唤醒康乃馨…</div></div>
 <div id="error"></div>
 
 <script src="https://fastly.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
@@ -80,11 +80,9 @@ const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerH
 camera.position.set(0, 4.2, 8.6);
 camera.lookAt(0, 0.7, 0);
 
-// 背景星空
 (function addStars() {
   const N = 1200;
   const pos = new Float32Array(N * 3);
-  const colors = new Float32Array(N * 3);
   for (let i = 0; i < N; i++) {
     const r = 24 + Math.random() * 34;
     const theta = Math.random() * Math.PI * 2;
@@ -92,17 +90,14 @@ camera.lookAt(0, 0.7, 0);
     pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
     pos[i * 3 + 1] = r * Math.cos(phi) * 0.8 + 4;
     pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-    const c = new THREE.Color().setHSL(0.7 + Math.random()*0.2, 0.8, 0.6);
-    colors[i*3] = c.r; colors[i*3+1] = c.g; colors[i*3+2] = c.b;
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  g.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  const m = new THREE.PointsMaterial({ vertexColors: true, size: 0.12, transparent: true, opacity: 0.6, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+  const m = new THREE.PointsMaterial({ color: 0xffb3c6, size: 0.1, transparent: true, opacity: 0.5, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
   scene.add(new THREE.Points(g, m));
 })();
 
-function buildFlower() {
+function buildCarnation() {
   const P = [], B = [], C = [], D = [], S = [], Q = [];
   const col = [0, 0, 0];
   function lerpColor(a, b, t) { col[0] = a[0] + (b[0] - a[0]) * t; col[1] = a[1] + (b[1] - a[1]) * t; col[2] = a[2] + (b[2] - a[2]) * t; return col; }
@@ -111,21 +106,22 @@ function buildFlower() {
     P.push(px, py, pz); C.push(r, g, b); D.push(Math.min(1, delay)); S.push(size); Q.push(seed);
     const len = Math.hypot(px, py, pz) || 1;
     const nx = px / len, ny = py / len, nz = pz / len;
-    // 花苞非常紧实
     const rad = 0.08 + Math.random() * 0.1;
-    B.push(nx * rad * 0.8, ny * rad * 1.2 + 0.15, nz * rad * 0.8);
+    B.push(nx * rad * 0.8, ny * rad * 1.1 + 0.1, nz * rad * 0.8);
   }
 
-  // 正常花瓣形态，从内到外，紫渐变到青蓝
+  // 康乃馨专属：锯齿边缘、紧密堆叠、落日珊瑚渐变
   const layers = [
-    // 最内层：紧包，紫色，微微向内卷
-    { petals: 6, count: 600, len: 1.2, width: 0.7, tilt: 1.4, r0: 0.1, offset: 0.0, cA: [0.5, 0.1, 0.8], cB: [0.6, 0.2, 0.9], delayBase: 0.0, sizeBase: 1.6 },
-    // 中层：舒展，紫偏粉
-    { petals: 7, count: 900, len: 2.0, width: 1.0, tilt: 0.9, r0: 0.15, offset: 0.8, cA: [0.6, 0.2, 0.9], cB: [0.4, 0.5, 0.95], delayBase: 0.15, sizeBase: 1.8 },
-    // 中外层：青蓝
-    { petals: 8, count: 1200, len: 2.8, width: 1.3, tilt: 0.5, r0: 0.2, offset: 2.0, cA: [0.4, 0.5, 0.95], cB: [0.1, 0.8, 1.0], delayBase: 0.3, sizeBase: 2.0 },
-    // 最外层：宽大，平展，青蓝泛白
-    { petals: 8, count: 1400, len: 3.5, width: 1.6, tilt: 0.2, r0: 0.25, offset: 3.5, cA: [0.1, 0.8, 1.0], cB: [0.5, 0.9, 1.0], delayBase: 0.45, sizeBase: 2.2 }
+    // 内层：深洋红，紧实包裹
+    { petals: 7, count: 700, len: 1.2, width: 0.8, tilt: 1.3, r0: 0.1, offset: 0.0, cA: [0.7, 0.1, 0.3], cB: [0.9, 0.2, 0.4], delayBase: 0.0, sizeBase: 1.6 },
+    // 中内层：珊瑚红，褶皱开始明显
+    { petals: 8, count: 900, len: 1.8, width: 1.0, tilt: 0.9, r0: 0.15, offset: 0.8, cA: [0.9, 0.2, 0.4], cB: [1.0, 0.4, 0.5], delayBase: 0.15, sizeBase: 1.7 },
+    // 中层：蜜桃橘粉，波浪状外翻
+    { petals: 9, count: 1100, len: 2.4, width: 1.2, tilt: 0.6, r0: 0.2, offset: 1.6, cA: [1.0, 0.4, 0.5], cB: [1.0, 0.6, 0.6], delayBase: 0.25, sizeBase: 1.8 },
+    // 中外层：橘粉色，更加宽大平展
+    { petals: 9, count: 1200, len: 2.8, width: 1.3, tilt: 0.35, r0: 0.25, offset: 2.4, cA: [1.0, 0.6, 0.6], cB: [1.0, 0.75, 0.7], delayBase: 0.35, sizeBase: 1.9 },
+    // 外层：香槟浅金，极致的锯齿裙摆
+    { petals: 10, count: 1300, len: 3.2, width: 1.5, tilt: 0.15, r0: 0.3, offset: 3.2, cA: [1.0, 0.75, 0.7], cB: [1.0, 0.9, 0.8], delayBase: 0.45, sizeBase: 2.0 }
   ];
 
   for (const L of layers) {
@@ -138,19 +134,19 @@ function buildFlower() {
         let u = Math.random(); 
         let s = (Math.random() * 2 - 1); 
         
-        // 正常花瓣外轮廓：宽大水滴形
-        const w = Math.pow(Math.sin(Math.PI * u), 0.6);
-        const halfW = L.width * w;
+        // 康乃馨的锯齿边缘模拟：利用高频正弦波让花瓣边缘产生锯齿的粒子分布
+        const zigzag = Math.sin(u * Math.PI * 12) * 0.08 * (1 - u); // 根部平整，边缘锯齿多
+        const edgeW = Math.pow(Math.sin(Math.PI * u), 0.5) + zigzag;
+        
+        const halfW = L.width * edgeW;
         const lz = s * halfW;
         const lx = L.r0 + u * L.len;
 
-        // 杯状形态：两边向上兜起
-        let ly = 0.8 * s * s * halfW; 
-        // 尖端微微下垂
-        ly -= Math.pow(u, 2.5) * 0.4 * L.len;
-        
-        // 最内层向花心收拢
-        if (L.tilt > 1.0) { ly += Math.pow(u, 2) * 0.4; }
+        // 花瓣纵向的褶皱感
+        let ly = 0.7 * s * s * halfW; 
+        ly += Math.sin(u * Math.PI * 8 + s * 5) * 0.05; // 波浪褶皱
+        ly -= Math.pow(u, 2.5) * 0.4 * L.len; // 尖端下垂
+        if (L.tilt > 1.0) { ly += Math.pow(u, 2) * 0.3; } // 内层向内包
 
         const rx = lx * ct - ly * st;
         const ry = lx * st + ly * ct;
@@ -158,33 +154,35 @@ function buildFlower() {
         const pz = -rx * sa + lz * ca;
         const py = ry;
 
-        const tc = Math.pow(u, 0.6);
+        const tc = Math.pow(u, 0.7);
         const c = lerpColor(L.cA, L.cB, tc);
-        const bright = 0.8 + Math.random() * 0.4;
+        // 边缘高光加强，体现康乃馨的质感
+        const isEdge = Math.abs(s) > 0.8 ? 1.2 : 1.0; 
+        const bright = (0.8 + Math.random() * 0.4) * isEdge;
 
-        addParticle(px, py, pz, c[0] * bright, c[1] * bright, c[2] * bright, L.delayBase + Math.random() * 0.2, L.sizeBase * (0.8 + Math.random()*0.4), Math.random());
+        addParticle(px, py, pz, c[0]*bright, c[1]*bright, c[2]*bright, L.delayBase + Math.random() * 0.2, L.sizeBase * (0.8 + Math.random()*0.4), Math.random());
       }
     }
   }
 
-  // 核心：银金色花蕊
-  const CORE = 1800;
-  const goldA = [1.0, 0.8, 0.4]; // 金
-  const goldB = [1.0, 1.0, 1.0]; // 银白
+  // 核心：香槟金花蕊
+  const CORE = 1500;
+  const goldA = [1.0, 0.8, 0.5];
+  const goldB = [1.0, 0.95, 0.85];
   for (let i = 0; i < CORE; i++) {
-    const r = Math.pow(Math.random(), 0.5) * 0.45;
+    const r = Math.pow(Math.random(), 0.5) * 0.35;
     const cosPhi = Math.random();
     const sinPhi = Math.sqrt(1 - cosPhi * cosPhi);
     const theta = Math.random() * Math.PI * 2;
     const x = r * sinPhi * Math.cos(theta);
     const z = r * sinPhi * Math.sin(theta);
-    const y = r * cosPhi * 0.9 + 0.15;
-    const c = lerpColor(goldA, goldB, Math.pow(Math.random(), 0.8));
+    const y = r * cosPhi * 0.8 + 0.1;
+    const c = lerpColor(goldA, goldB, Math.random());
     const bright = 0.9 + Math.random() * 0.5;
     addParticle(x, y, z, c[0]*bright, c[1]*bright, c[2]*bright, 0.55 + Math.random() * 0.2, 1.2 + Math.random() * 1.5, Math.random());
   }
 
-  const geo = new THREE.BufferGeometry();
+    const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3));
   geo.setAttribute('aBud', new THREE.Float32BufferAttribute(B, 3));
   geo.setAttribute('aColor', new THREE.Float32BufferAttribute(C, 3));
@@ -238,7 +236,7 @@ const fragmentShader = `
 
 const uniforms = { uBloom: { value: 0 }, uTime: { value: 0 }, uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) }, uPointer: { value: new THREE.Vector2(0, 0) } };
 const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader, transparent: true, depthWrite: false, depthTest: true, blending: THREE.AdditiveBlending });
-const flowerGeometry = buildFlower();
+const flowerGeometry = buildCarnation();
 const flowerPoints = new THREE.Points(flowerGeometry, material);
 const flowerGroup = new THREE.Group();
 flowerGroup.add(flowerPoints);
@@ -307,7 +305,7 @@ function drawPreview(lm) {
   for (let i = 0; i < lm.length; i++) {
     const isTip = (i === 4 || i === 8 || i === 12 || i === 16 || i === 20);
     pctx.beginPath(); pctx.arc(lm[i].x * W, lm[i].y * H, isTip ? 3.6 : 2.0, 0, Math.PI * 2);
-    pctx.fillStyle = i === 8 ? '#a855f7' : 'rgba(255, 225, 245, 0.92)'; pctx.fill();
+    pctx.fillStyle = i === 8 ? '#ff7eb3' : 'rgba(255, 225, 245, 0.92)'; pctx.fill();
   }
 }
 
